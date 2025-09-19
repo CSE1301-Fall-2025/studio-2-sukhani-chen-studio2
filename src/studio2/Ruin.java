@@ -4,52 +4,65 @@ public class Ruin {
 
     public static void main (String[] args) {
 
-       Scanner scan = new Scanner(System.in);
+        Scanner scan = new Scanner(System.in);
        
         System.out.println("Enter your start amount");
-        double startAmount = scan.nextDouble();
-         System.out.println("Enter your win chance");
+        int startAmount = scan.nextInt();
+        System.out.println("Enter your win chance");
         double winChance = scan.nextDouble();
-         System.out.println("Enter your win limit");
-        double winLimit = scan.nextDouble(); 
+        System.out.println("Enter your win limit");
+        int winLimit = scan.nextInt(); 
+        System.out.println("Enter total simulations");
+        int totalSimulations = scan.nextInt(); 
 
         boolean gameStatus = true;
-        double totalSimulations = 0.0;
 
-            int winTimes = 0;
-            double loseTimes = 0.0;
-            while (startAmount < winLimit && startAmount > 0) {
+        int winDays = 0;
+        int loseDays = 0;
+        int timesInDay = 0;
+        int amount=0;
+        for (int i=0;i<totalSimulations;i++){
+            amount=startAmount;
+            timesInDay=0;
+            while (amount < winLimit && amount > 0) {
 
                 double odds = Math.random();
-
+                //System.out.println("the random number is: "+odds);
                 if (odds < winChance ) {
-                    totalSimulations++;
-                    startAmount++;
-                    System.out.println ("Simulation: " + totalSimulations + " WIN");
-                    winTimes++;
-            
-            } else if (odds >= winChance) {
-                totalSimulations++;
-                startAmount--;
-                System.out.println ("Simulation: " + totalSimulations + " LOSE");
-                loseTimes++;
+                    amount++;
+                } 
+                else {
+                    amount--;
+                } 
+                timesInDay++;
             }
-            
-        }
+            if (amount==0){
+                loseDays++;
+                System.out.println ("Simulation " + i +" : "+ timesInDay+ " LOSE");
+            }
+            else{
+                winDays++;
+                System.out.println ("Simulation " + i +" : "+ timesInDay+ " WIN");
+            }
 
-        double realRuin = (double) Math.round (((loseTimes/totalSimulations)*100)/100);
+                
+        }
+        System.out.println("Losses: "+ loseDays+ " Simulations: "+totalSimulations);
+
+        double realRuin = (double) Math.round ((1.0*loseDays/totalSimulations)*100)/100.0;
         double a = (1-winChance)/winChance;
 
         double expectedRuin = 0.0;
 
         if (winChance == 0.5) {
-        expectedRuin = 1-(startAmount/winLimit);
+            expectedRuin = 1-(1.0*startAmount/winLimit);
         } 
         else {
-        expectedRuin = (Math.pow (a, startAmount) - Math.pow (a, winLimit)) / (1-Math.pow(a, winLimit));
+            expectedRuin = (Math.pow (a, startAmount) - Math.pow (a, winLimit)) / (1-Math.pow(a, winLimit));
         }
 
-        System.out.println ("From simulation: " + realRuin + " Expected: " + expectedRuin);
+        System.out.println ("Ruin Rate from Simulation: " + realRuin + " Expected Ruin Rate: " + expectedRuin);
 
         }
-}
+    }
+
